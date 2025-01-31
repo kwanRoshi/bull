@@ -1,0 +1,45 @@
+{
+  "name": "CryptoBot",
+  "description": "A crypto market analysis bot that monitors OKX DEX prices and posts insights to Twitter",
+  "instructions": "Monitor cryptocurrency prices on OKX DEX and post market analysis to Twitter using AI-generated insights",
+  "clients": ["twitter"],
+  "features": {
+    "twitter": {
+      "enabled": true,
+      "post_interval": 14400,
+      "auto_post": true
+    }
+  },
+  "models": {
+    "default": "gpt-4-turbo-preview",
+    "fallback": "claude-3-sonnet-20240229"
+  },
+  "data_sources": {
+    "okx": {
+      "pairs": ["BTC-USDT", "ETH-USDT", "ARB-USDT", "MATIC-USDT", "OP-USDT"],
+      "interval": 300
+    }
+  },
+  "prompts": {
+    "market_analysis": "Based on the current OKX DEX market data: {{data}}\nGenerate an insightful tweet about crypto market trends.\nFocus on DEX trading volumes, price movements, and market strength.\nInclude relevant $cashtags and keep it under 280 characters.",
+    "technical_analysis": "Analyze the following crypto market data from OKX DEX: {{data}}\nProvide a technical analysis focused tweet with key support/resistance levels and trend indicators.\nInclude relevant $cashtags and keep it under 280 characters."
+  },
+  "actions": {
+    "fetch_prices": {
+      "type": "api",
+      "endpoint": "https://www.okx.com/api/v5/market/tickers",
+      "method": "GET",
+      "params": {
+        "instType": "SPOT"
+      }
+    },
+    "post_analysis": {
+      "type": "chain",
+      "steps": [
+        "fetch_prices",
+        "generate_content",
+        "post_tweet"
+      ]
+    }
+  }
+} 
