@@ -1,9 +1,12 @@
 import os
+import os
 import hmac
 import base64
 import time
 import requests
-from datetime import datetime, UTC
+import logging
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 class OKXHandler:
     def __init__(self, api_key=None, api_secret=None, passphrase=None):
@@ -14,7 +17,7 @@ class OKXHandler:
 
     def _get_timestamp(self):
         """Get ISO 8601 timestamp"""
-        now = datetime.now(UTC)
+        now = datetime.now(ZoneInfo("UTC"))
         return now.isoformat("T", "milliseconds").replace("+00:00", "Z")
 
     def _sign(self, timestamp, method, request_path, body=''):
@@ -40,6 +43,7 @@ class OKXHandler:
         endpoint = '/api/v5/market/tickers'
         params = {'instType': 'SPOT'}
         headers = self._get_headers('GET', endpoint)
+        logging.debug(f"Fetching OKX market data for pairs: {pairs}")
         
         response = requests.get(
             f"{self.base_url}{endpoint}",
@@ -48,7 +52,9 @@ class OKXHandler:
         )
         
         if response.status_code != 200:
+            logging.error(f"Error fetching OKX data: {response.status_code} - {response.text}")
             raise Exception(f"Error fetching OKX data: {response.text}")
+        logging.debug(f"OKX API response: {response.text}")
             
         data = response.json()
         market_data = {}
@@ -80,4 +86,4 @@ class OKXHandler:
         if action['type'] == 'fetch_prices':
             pairs = context.get('config', {}).get('data_sources', {}).get('okx', {}).get('pairs', [])
             return self.get_market_data(pairs)
-        return None 
+        return None    
