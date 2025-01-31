@@ -16,8 +16,12 @@
   },
   "data_sources": {
     "okx": {
-      "pairs": ["BTC-USDT", "ETH-USDT", "ARB-USDT", "MATIC-USDT", "OP-USDT"],
+      "pairs": ["BTC-USDT", "ETH-USDT", "ARB-USDT", "MATIC-USDT", "OP-USDT", "DOGS-USDT", "STAMP-USDT", "ORDI-USDT", "FB-USDT", "CKB-USDT"],
       "interval": 300
+    },
+    "bitcoin_ecosystem": {
+      "tokens": ["DOGS", "STAMP", "ORDI", "FB", "CKB"],
+      "update_interval": 86400
     }
   },
   "prompts": {
@@ -42,4 +46,4 @@
       ]
     }
   }
-} 
+}  
